@@ -10,34 +10,54 @@ TokenType = TypeVar("TokenType")
 
 @dataclass
 class Token(Generic[TokenType]):
+    name: str
     pat: str
-    name: str = ""
     val: TokenType | None = None
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, self.__class__):
+            return self.name == other.name and self.val == other.val
+        elif isinstance(other, str):
+            return self.name == other.name
+        else:
+            return False
 
 
 class TokenNs(type):
     def __new__(mcls, clsname, bases, clsdict):
+        ns = dict(clsdict)
         for name, val in clsdict.items():
-            if isinstance(val, Token):
-                val.name = name
-        return super().__new__(mcls, clsname, bases, clsdict)
+            if name[:2] == "__" and name[-2:] == "__":
+                continue
+            if isinstance(val, str):
+                ns[name] = Token(name, f"(?P<{name}>{val})")
+        return super().__new__(mcls, clsname, bases, ns)
 
     def __iter__(cls):
         for name, tok in cls.__dict__.items():
             if isinstance(tok, Token):
-                yield tok
+                yield name
 
 
 class Tokens(metaclass=TokenNs):
-    NAME = Token(r"[a-zA-Z_][a-zA-Z_0-9]*")
-    NUM = Token(r"\d+")
+    NAME = r"[a-zA-Z_][a-zA-Z_0-9]*"
+    NUM = r"\d+"
+    PLUS = r"\+"
+    MINUS = r"-"
+    MUL = r"\*"
+    DIV = r"/"
+    LPAREN = r"\("
+    RPAREN = r"\)"
+    WS = r"\s+"
 
 
-def iter_tokens(sexpr: str = ""):
-    for tok in Tokens:
-        print(tok)
+def iter_tokens(sexpr: str = "2 + (3 * 4) + 5"):
+    pat = "|".join(getattr(Tokens, name).pat for name in Tokens)
+    for match in re.finditer(pat, sexpr):
+        if match.lastgroup != "WS":
+            yield match.group(0)
 
 
 if __name__ == "__main__":
-    iter_tokens()
-    print(Tokens.NAME.name)
+    for tok in iter_tokens():
+        print(tok)
