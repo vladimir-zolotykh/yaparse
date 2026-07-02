@@ -52,8 +52,9 @@ class Parser:
             res = self.expr()
             self._expect(cast(T.Token, T.Tokens.RPAREN))
         else:
-            assert self.token and isinstance(self.token.val, float)
-            res = N.Num(float(self.token.val))
+            assert self.token
+            # res = N.Num(float(self.token.val))
+            res = N.Num(cast(float, self.token.val))
             self._advance()
         return res
 
