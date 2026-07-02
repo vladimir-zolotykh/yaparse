@@ -5,14 +5,16 @@ from typing import TypeVar, Generic, Iterator, cast
 from dataclasses import dataclass
 import re
 
-TokenType = TypeVar("TokenType")
+# TokenType = TypeVar("TokenType")
 
 
+# class Token(Generic[TokenType]):
 @dataclass
-class Token(Generic[TokenType]):
+class Token:
     name: str
     pat: str
-    val: TokenType | None = None
+    # val: TokenType | None = None
+    val: str | float | None = None
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
