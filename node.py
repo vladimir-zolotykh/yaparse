@@ -31,7 +31,7 @@ class Plus(BinOp):
 
 @dataclass
 class Minus(BinOp):
-    pass
+    val: str = field(init=False, default="-")
 
 
 @dataclass(repr=False)
@@ -41,4 +41,4 @@ class Mul(BinOp):
 
 @dataclass
 class Div(BinOp):
-    pass
+    val: str = field(init=False, default="/")
