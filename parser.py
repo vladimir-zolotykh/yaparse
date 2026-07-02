@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
 from typing import Iterator, cast
-import node as N
+import node_classes as N
 import iter_tokens as T
 
 
