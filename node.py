@@ -15,18 +15,18 @@ class Num(Node):
         return f"{self.__class__.__name__}({self.val})"
 
 
-@dataclass
+@dataclass(repr=False)
 class BinOp(Node):
     left: Node | None = None
     right: Node | None = None
 
+    def __repr__(self):
+        return f"{type(self).__name__}({self.left}, {self.right})"
 
-@dataclass
+
+@dataclass(repr=False)
 class Plus(BinOp):
     val: str = field(init=False, default="+")
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.left}, {self.right})"
 
 
 @dataclass
@@ -34,12 +34,9 @@ class Minus(BinOp):
     pass
 
 
-@dataclass
+@dataclass(repr=False)
 class Mul(BinOp):
     val: str = field(init=False, default="*")
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.left}, {self.right})"
 
 
 @dataclass
