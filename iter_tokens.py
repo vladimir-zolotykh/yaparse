@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Iterator, cast
 from dataclasses import dataclass
 import re
 
@@ -14,11 +14,11 @@ class Token(Generic[TokenType]):
     pat: str
     val: TokenType | None = None
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return self.name == other.name and self.val == other.val
         elif isinstance(other, str):
-            return self.name == other.name
+            return self.name == other
         else:
             return False
 
@@ -51,11 +51,13 @@ class Tokens(metaclass=TokenNs):
     WS = r"\s+"
 
 
-def iter_tokens(sexpr: str = "2 + (3 * 4) + 5"):
+def iter_tokens(sexpr: str = "2 + (3 * 4) + 5") -> Iterator[Token]:
     pat = "|".join(getattr(Tokens, name).pat for name in Tokens)
     for match in re.finditer(pat, sexpr):
         if match.lastgroup != "WS":
-            yield match.group(0)
+            tok: Token = getattr(Tokens, cast(str, match.lastgroup))
+            tok.val = match.group(0)
+            yield tok
 
 
 if __name__ == "__main__":
