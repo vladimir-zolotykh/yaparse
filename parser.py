@@ -5,6 +5,11 @@ from typing import Iterator, cast
 import node_classes as N
 import iter_tokens as T
 
+PLUS = T.Tokens.PLUS
+MINUS = T.Tokens.MINUS
+MUL = T.Tokens.MUL
+DIV = T.Tokens.DIV
+
 
 class Parser:
     def __init__(self):
@@ -30,19 +35,19 @@ class Parser:
     def expr(self) -> N.Node:
         res = self.term()
         # op: T.Token
-        while (op := self.token) and (op in (T.Tokens.PLUS, T.Tokens.MINUS)):
+        while (op := self.token) and (op in (PLUS, MINUS)):
             self._consume()
             right = self.term()
-            res = N.Plus(res, right) if op == T.Tokens.PLUS else N.Minus(res, right)
+            res = N.Plus(res, right) if op == PLUS else N.Minus(res, right)
         return res
 
     def term(self) -> N.Node:
         res = self.factor()
         # op: T.Token
-        while (op := self.token) and (op in (T.Tokens.MUL, T.Tokens.DIV)):
+        while (op := self.token) and (op in (MUL, DIV)):
             self._consume()
             right = self.factor()
-            res = N.Mul(res, right) if op == T.Tokens.MUL else N.Div(res, right)
+            res = N.Mul(res, right) if op == MUL else N.Div(res, right)
         return res
 
     def factor(self) -> N.Node:
