@@ -11,7 +11,8 @@ class Node:
 
 @dataclass
 class Num(Node):
-    pass
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.val})"
 
 
 @dataclass
