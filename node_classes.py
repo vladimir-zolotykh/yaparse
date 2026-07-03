@@ -9,6 +9,12 @@ class Node:
 
 
 class Num(Node):
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, type(self)):
+            return self.val == other.val
+        else:
+            return False
+
     def __repr__(self):
         return f"{type(self).__name__}({self.val})"
 
@@ -26,7 +32,11 @@ class BinOp(Node):
 
 
 class Plus(BinOp):
-    pass
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, type(self)):
+            return self.left == other.left and self.right == other.right
+        else:
+            return False
 
 
 class Minus(BinOp):
@@ -34,7 +44,11 @@ class Minus(BinOp):
 
 
 class Mul(BinOp):
-    pass
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, type(self)):
+            return self.left == other.left and self.right == other.right
+        else:
+            return False
 
 
 class Div(BinOp):
