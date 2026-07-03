@@ -13,7 +13,8 @@ class MethodRename(type):
             if name[:2] == "__" and name[-2:] == "__":
                 continue
             func_types = []
-            if name == "visit":
+            mutate = clsdict.get("_mutate", False)
+            if name == "visit" and mutate:
                 sig = inspect.signature(func)
                 # replace visit(self, n: N.Plus) with visit_Plus(self, N.Plus)
                 for pname, parm in sig.parameters.items():
@@ -28,15 +29,24 @@ class MethodRename(type):
         return super().__new__(mcls, clsname, bases, ns2)
 
 
-class Evalutor(metaclass=MethodRename):
+class Visitor:
+    _mutate = True
+
+    def visit(self, n: N.Node) -> float:
+        method_name = f"visit_{type(n).__name__}"
+        func = getattr(self, method_name, self.visit_generic)
+        return func(n)
+
+
+class Evalutor(Visitor, metaclass=MethodRename):
     def visit(self, n: N.Num) -> float:
-        pass
+        return n.val
 
     def visit(self, n: N.Plus) -> float:
-        pass
+        return self.visit(n.left) + self.visit(n.right)
 
     def visit(self, n: N.Mul) -> float:
-        pass
+        return self.visit(n.left) * self.visit(n.right)
 
 
 if __name__ == "__main__":
