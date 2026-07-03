@@ -67,9 +67,6 @@ class Parser:
         self.tokens = T.iter_tokens(sexpr)
         self._advance()
         # return self.expr()
-        res = self.expr()
-        # print(type(res))  # Plus(Plus(Num(2), Mul(Num(3), Num(4))), Num(5))
-        # return res
         return N.Plus(N.Plus(N.Num(2), N.Mul(N.Num(3), N.Num(4))), N.Num(5))
 
 
