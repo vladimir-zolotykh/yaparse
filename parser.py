@@ -28,7 +28,7 @@ class Parser:
     def _expect(self, expected: T.Token) -> None:
         if self.token != expected:
             raise SyntaxError(f"Got {self.token}: expected {expected}")
-        self._consume()
+        self.token = next(self.tokens, None)
 
     def _consume(self) -> None:
         """Consume one token unconditionally"""
@@ -73,6 +73,12 @@ class Parser:
 def test_plus_num2():
     n: N.Node = Parser().parse("2")
     assert n == N.Num(2)
+
+
+def test_parse_paren_nested():
+    sexpr = "((2))"
+    expected = N.Num(2)
+    assert Parser().parse(sexpr) == expected
 
 
 if __name__ == "__main__":
