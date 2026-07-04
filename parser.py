@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
 from typing import Iterator, cast
-
-# import node_classes as N
+import pytest
 import node_bare as N
 import iter_tokens as T
 
@@ -67,7 +66,10 @@ class Parser:
     def parse(self, sexpr: str) -> N.Node:
         self.tokens = T.iter_tokens(sexpr)
         self._advance()
-        return self.expr()
+        res = self.expr()
+        if self.token is not None:
+            raise SyntaxError(f"EOF expected, got {self.token}")
+        return res
 
 
 def test_plus_num2():
@@ -79,6 +81,20 @@ def test_parse_paren_nested():
     sexpr = "((2))"
     expected = N.Num(2)
     assert Parser().parse(sexpr) == expected
+
+
+@pytest.mark.parametrize(
+    "sexpr",
+    [
+        "2 3",
+        "2 + 3 4",
+        "2 (3)",
+        "(2) 3",
+    ],
+)
+def test_trailing_garbage(sexpr):
+    with pytest.raises(SyntaxError):
+        Parser().parse(sexpr)
 
 
 if __name__ == "__main__":
