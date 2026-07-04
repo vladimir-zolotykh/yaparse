@@ -66,12 +66,19 @@ class Parser:
     def parse(self, sexpr: str) -> N.Node:
         self.tokens = T.iter_tokens(sexpr)
         self._advance()
-        # return self.expr()
-        return N.Plus(N.Plus(N.Num(2), N.Mul(N.Num(3), N.Num(4))), N.Num(5))
+        return self.expr()
+
+
+def test_plus_num2():
+    n: N.Node = Parser().parse("2")
+    assert n == N.Num(2)
 
 
 if __name__ == "__main__":
+    sexpr = "2 + 3"
+    n = Parser().parse(sexpr)
+    print(n)  # Plus(Num(2), Num(3))
+
     sexpr = "2 + (3 * 4) + 5"
-    n: N.Node = Parser().parse(sexpr)
-    n2 = N.Plus(N.Plus(N.Num(2), N.Mul(N.Num(3), N.Num(4))), N.Num(5))
-    assert n == n2
+    n = Parser().parse(sexpr)
+    print(n)  # Plus(Plus(Num(2), Mul(Num(3), Num(4))), Num(5))
