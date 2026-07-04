@@ -14,5 +14,6 @@ def test_parser_basic1():
 
 def test_parser_basic2():
     sexpr = "2"
-    n = P.Parser().parse(sexpr)
-    assert n == N.Num(2)
+    n: N.Node = P.Parser().parse(sexpr)
+    expected: N.Node = N.Num(2)
+    assert n == expected
