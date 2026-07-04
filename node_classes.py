@@ -27,16 +27,22 @@ class BinOp(Node):
         self.left = left
         self.right = right
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, type(self)):
+            return (
+                self.val == other.val
+                and self.left == other.left
+                and self.right == other.right
+            )
+        else:
+            return False
+
     def __repr__(self):
         return f"{type(self).__name__}({self.left}, {self.right})"
 
 
 class Plus(BinOp):
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, type(self)):
-            return self.left == other.left and self.right == other.right
-        else:
-            return False
+    pass
 
 
 class Minus(BinOp):
@@ -44,11 +50,7 @@ class Minus(BinOp):
 
 
 class Mul(BinOp):
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, type(self)):
-            return self.left == other.left and self.right == other.right
-        else:
-            return False
+    pass
 
 
 class Div(BinOp):
