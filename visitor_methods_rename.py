@@ -4,7 +4,7 @@
 from typing import MutableMapping, Any
 import inspect
 from parser import Parser
-import node_classes as N
+import node_bare as N
 
 
 class MultiDict(dict):
@@ -50,10 +50,10 @@ class Evalutor(Visitor, metaclass=MethodRename):
     def visit(self, n: N.Num) -> float:
         return n.val
 
-    def visit(self, n: N.Plus) -> float:
+    def visit(self, n: N.Plus) -> float:  # noqa: F811
         return self.visit(n.left) + self.visit(n.right)
 
-    def visit(self, n: N.Mul) -> float:
+    def visit(self, n: N.Mul) -> float:  # noqa: F811
         return self.visit(n.left) * self.visit(n.right)
 
 
