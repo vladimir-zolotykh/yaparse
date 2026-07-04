@@ -1,6 +1,6 @@
 import pytest
 import parser as P
-import node_classes as N
+import node_bare as N
 
 
 def test_parser_basic1():

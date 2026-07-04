@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
 from typing import Iterator, cast
-import node_classes as N
+
+# import node_classes as N
+import node_bare as N
 import iter_tokens as T
 
 PLUS = T.Tokens.PLUS
@@ -58,8 +60,7 @@ class Parser:
             self._expect(cast(T.Token, T.Tokens.RPAREN))
         else:
             assert self.token
-            # res = N.Num(float(self.token.val))
-            res = N.Num(cast(float, self.token.val))
+            res = N.Num(float(str(self.token.val)))
             self._advance()
         return res
 
