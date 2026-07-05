@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
 from typing import MutableMapping, Any
+from functools import wraps
 import inspect
 from parser import Parser
 import node_bare as N
@@ -53,7 +54,13 @@ class Evalutor(metaclass=RenameMeta):
     def visit(self, n: N.Plus) -> float:  # noqa: F811
         return self.visit(n.left) + self.visit(n.right)
 
+    def visit(self, n: N.Minus) -> float:  # noqa: F811
+        return self.visit(n.left) + self.visit(n.right)
+
     def visit(self, n: N.Mul) -> float:  # noqa: F811
+        return self.visit(n.left) * self.visit(n.right)
+
+    def visit(self, n: N.Div) -> float:  # noqa: F811
         return self.visit(n.left) * self.visit(n.right)
 
 
