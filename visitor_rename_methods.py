@@ -24,17 +24,7 @@ class MultiDict(dict):
             super().__setitem__(new_visit_name, val)
 
 
-class MethodRename(type):
-    @classmethod
-    def __prepare__(
-        mcls, clsname: str, bases: tuple[type, ...], /, **kwds: Any
-    ) -> MutableMapping[str, object]:
-        return MultiDict()
-
-
-class Visitor:
-    _mutate = False
-
+class RenameMeta(type):
     def visit(self, n: N.Node) -> float:
         self.method_name = f"visit_{type(n).__name__}"
         func = getattr(self, self.method_name, self.visit_generic)
@@ -43,10 +33,20 @@ class Visitor:
     def visit_generic(self, n: N.Node) -> float:
         raise TypeError(f"{self.method_name} not found")
 
+    def __new__(mcls, clsname, bases, ns):
+        ns2 = dict(ns)
+        ns2["visit"] = mcls.visit
+        ns2["visit_generic"] = mcls.visit_generic
+        return super().__new__(mcls, clsname, bases, ns2)
 
-class Evalutor(Visitor, metaclass=MethodRename):
-    _mutate = True
+    @classmethod
+    def __prepare__(
+        mcls, clsname: str, bases: tuple[type, ...], /, **kwds: Any
+    ) -> MutableMapping[str, object]:
+        return MultiDict()
 
+
+class Evalutor(metaclass=RenameMeta):
     def visit(self, n: N.Num) -> float:
         return n.val
 
