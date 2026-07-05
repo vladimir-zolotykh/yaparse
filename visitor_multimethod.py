@@ -65,8 +65,14 @@ class Evalutor(metaclass=MultiMeta):
     def visit(self, n: N.Plus) -> float:  # noqa: F811
         return self.visit(n.left) + self.visit(n.right)
 
+    def visit(self, n: N.Minus) -> float:  # noqa: F811
+        return self.visit(n.left) - self.visit(n.right)
+
     def visit(self, n: N.Mul) -> float:  # noqa: F811
         return self.visit(n.left) * self.visit(n.right)
+
+    def visit(self, n: N.Div) -> float:  # noqa: F811
+        return self.visit(n.left) / self.visit(n.right)
 
 
 if __name__ == "__main__":
