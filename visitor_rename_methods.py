@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
 from typing import MutableMapping, Any
-from functools import wraps
 import inspect
+import pytest
 from parser import Parser
 import node_bare as N
 
@@ -61,7 +61,20 @@ class Evalutor(metaclass=RenameMeta):
         return self.visit(n.left) * self.visit(n.right)
 
     def visit(self, n: N.Div) -> float:  # noqa: F811
-        return self.visit(n.left) * self.visit(n.right)
+        return self.visit(n.left) / self.visit(n.right)
+
+
+@pytest.mark.parametrize(
+    "sexpr, expected",
+    [
+        ("2 + (3 * 4) + 5", 19.0),
+        ("18 / (3 * 2)", 3.0),
+        ("(2 + 3) * 4", 20.0),
+    ],
+)
+def test_evaluator(sexpr, expected):
+    n = Parser().parse(sexpr)
+    assert Evalutor().visit(n) == expected
 
 
 if __name__ == "__main__":
