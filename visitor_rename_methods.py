@@ -27,9 +27,17 @@ class MultiDict(dict):
 
 class RenameMeta(type):
     def visit(self, n: N.Node) -> float:
+        depth = getattr(self, "_depth", 0)
         self.method_name = f"visit_{type(n).__name__}"
+        print(f'{"  " * depth}{self.method_name}')
         func = getattr(self, self.method_name, self.visit_generic)
-        return func(n)
+        try:
+            self._depth = depth + 1
+            res = func(n)
+        finally:
+            self._depth = depth
+        print(f'{"  " * depth}->{res}')
+        return res
 
     def visit_generic(self, n: N.Node) -> float:
         raise TypeError(f"{self.method_name} not found")
