@@ -26,26 +26,34 @@ class MultiDict(dict):
             super().__setitem__(new_visit_name, val)
 
 
-def print_trace(func):
-    @wraps(func)
-    def wrapper(self, n):
-        depth = getattr(self, "_depth", 0)
-        print(f'{"  " * depth}visit_{type(n).__name__}')
-        try:
-            self._depth = depth + 1
-            res = func(self, n)
-        finally:
-            self._depth = depth
-        print(f'{"  " * depth}->{res}')
-        return res
+def print_trace(trace_on_flag=True):
+    def decorate(func):
+        if not trace_on_flag:  # no trace
+            return func
 
-    return wrapper
+        @wraps(func)
+        def wrapper(self, n):
+            depth = getattr(self, "_depth", 0)
+            print(f'{"  " * depth}visit_{type(n).__name__}')
+            try:
+                self._depth = depth + 1
+                res = func(self, n)
+            finally:
+                self._depth = depth
+            print(f'{"  " * depth}->{res}')
+            return res
+
+        return wrapper
+
+    return decorate
 
 
 class RenameMeta(type):
 
-    def __new__(mcls, clsname, bases, ns):
-        @print_trace
+    def __new__(mcls, clsname, bases, ns, **kwds):
+        trace_on_flag = kwds.get("trace_on_flag", False)
+
+        @print_trace(trace_on_flag)
         def visit(self, n: N.Node) -> float:
             self.method_name = f"visit_{type(n).__name__}"
             func = getattr(self, self.method_name, self.visit_generic)
@@ -66,7 +74,7 @@ class RenameMeta(type):
         return MultiDict()
 
 
-class Evalutor(metaclass=RenameMeta):
+class Evalutor(metaclass=RenameMeta, trace_on_flag=True):
     def visit(self, n: N.Num) -> float:
         return n.val
 
