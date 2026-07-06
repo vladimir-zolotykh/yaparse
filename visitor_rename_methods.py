@@ -28,13 +28,12 @@ class MultiDict(dict):
 
 def print_trace(func):
     @wraps(func)
-    def wrapper(*args):
-        self = args[0]
+    def wrapper(self, n):
         depth = getattr(self, "_depth", 0)
+        print(f'{"  " * depth}visit_{type(n).__name__}')
         try:
             self._depth = depth + 1
-            res = func(*args)
-            print(f'{"  " * depth}{self.method_name}')
+            res = func(self, n)
         finally:
             self._depth = depth
         print(f'{"  " * depth}->{res}')
@@ -51,19 +50,6 @@ class RenameMeta(type):
             self.method_name = f"visit_{type(n).__name__}"
             func = getattr(self, self.method_name, self.visit_generic)
             return func(n)
-
-        # def visit(self, n: N.Node) -> float:
-        #     depth = getattr(self, "_depth", 0)
-        #     self.method_name = f"visit_{type(n).__name__}"
-        #     print(f'{"  " * depth}{self.method_name}')
-        #     func = getattr(self, self.method_name, self.visit_generic)
-        #     try:
-        #         self._depth = depth + 1
-        #         res = func(n)
-        #     finally:
-        #         self._depth = depth
-        #     print(f'{"  " * depth}->{res}')
-        #     return res
 
         def visit_generic(self, n: N.Node) -> float:
             raise TypeError(f"{self.method_name} not found")
